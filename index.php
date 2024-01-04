@@ -14,7 +14,8 @@ function whatIsHappening() {
     var_dump($_SESSION);
 }
 
-$products = [
+// CATEGORIZE ITEMS
+$tokens = [
     ['category' => 'Harry Potter','name' => '10 Galleons', 'price' => 4.99],
     ['category' => 'Harry Potter','name' => '20 Sickles', 'price' => 4.99],
     ['category' => 'Harry Potter','name' => '30 Knuts', 'price' => 5.99],
@@ -46,6 +47,8 @@ $products = [
     ['category' => 'Star Wars', 'name' => '25 Beskar Chips', 'price' => 27.99],
     ['category' => 'Elder Scrolls', 'name' => '15 Gold Septims', 'price' => 11.99],
     ['category' => 'Elder Scrolls', 'name' => '50 Gold Septims', 'price' => 34.99],
+];
+$accessories = [
     ['category' => 'Accessories', 'name' => 'Leather pouch - small', 'price' => 8.99],
     ['category' => 'Accessories', 'name' => 'Leather pouch - medium', 'price' => 12.99],
     ['category' => 'Accessories', 'name' => 'Leather pouch - large', 'price' => 18.99],
@@ -55,11 +58,20 @@ $products = [
     ['category' => 'Accessories', 'name' => 'Velvet pouch - large', 'price' => 18.99],
     ['category' => 'Accessories', 'name' => 'Velvet pouch - king', 'price' => 24.99],
 ];
+// DEFINE CATEGORIES
+if($_GET['cat'] == 0){
+    $products = array_merge($tokens, $accessories);
+} else if($_GET['cat'] == 1) {
+    $products = $tokens;
+} else if ($_GET['cat'] == 2) {
+    $products = $accessories;
+};
 
+//INITIALIZE TOTAL AS ZERO
 $totalValue = 0;
 
-function validate()
-{
+//VALIDATE USER INPUT
+function validate() {
     $error = false;
     // CHECK FOR EMPTY FIELDS
     $required = ['email', 'street', 'streetnumber', 'zipcode', 'city', 'products'];
@@ -68,44 +80,43 @@ function validate()
         if (empty($_POST[$field])) {
             $error = true;
             $emptyFields[] = $field;
-            echo "<p class='alert alert-danger'>{$field} is required.</p>";
+            // echo "<p class='alert alert-danger'>{$field} is required.</p>";
         } 
     }
     if (!empty($emptyFields)) {
         echo "<p class='alert alert-danger'> All fields must be filled in.</p>";
         $error = true;
     } else {
-        echo "<p class='alert alert-success'>All fields filled in.</p>";
+        // echo "<p class='alert alert-success'>All fields filled in.</p>";
     }
     // CHECK FOR NUMERICAL ZIPCODE
     if(!is_numeric($_POST['zipcode'])){
         echo "<p class='alert alert-warning'>Zipcode can only contain numbers.</p>";
         $error = true;
     } else {
-        echo "<p class='alert alert-success'>Zipcode validated.</p>";
+        // echo "<p class='alert alert-success'>Zipcode validated.</p>";
     }
     // CHECK FOR VALID EMAIL
     if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         echo "<p class='alert alert-warning'>Invalid e-mail address.</p>";
         $error = true;
     } else {
-        echo "<p class='alert alert-success'>E-mail address validated.</p>";
+        // echo "<p class='alert alert-success'>E-mail address validated.</p>";
     }
     // CHECK FOR EMPTY SHOPPING CART
     if (empty($_POST['products'])) {
         echo "<p class='alert alert-danger'>Please select products before ordering.</p>";
         $error = true;
     } else {
-        echo "<p class='alert alert-success'>Chosen products found.</p>";
+        // echo "<p class='alert alert-success'>Chosen products found.</p>";
     }
     return $error; 
 }
 
-function handleForm()
-{
-    global $products, $totalValue, $error;
-    validate();
-
+//HANDLE FORM
+function handleForm() {
+    global $products, $totalValue;
+    $error = validate();
     if (!$error) {
         $selectedProducts = [];
         foreach ($_POST['products'] as $index => $value) {
@@ -114,17 +125,15 @@ function handleForm()
                 $totalValue += $products[$index]['price'];
             }
         }
-
         echo "<p><strong>Order confirmation</strong> sent to <strong>{$_POST['email']}</strong>.</p>";
-        echo "<h3>Delivery Address:</h3>";
+        echo "<h3>Delivery address:</h3>";
         echo "<p>{$_POST['street']} {$_POST['streetnumber']}</p>";
         echo "<p>{$_POST['zipcode']} {$_POST['city']}</p>";
-        echo "<h3>Selected Products:</h3>";
+        echo "<h3>Selected products:</h3>";
 
         foreach ($selectedProducts as $selectedProduct) {
             echo "<p>{$selectedProduct['name']}</p>";
         }
-
 
         echo "<p>Total cost: &euro; $totalValue</p>";
         $formSubmitted = true;
@@ -139,6 +148,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$formSubmitted) {
     handleForm();
 }
 
-require 'form-view.php';
+// Check if form submitted and save POST data to session
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $_SESSION['email'] = $_POST['email'] ?? '';
+    $_SESSION['street'] = $_POST['street'] ?? '';
+    $_SESSION['streetnumber'] = $_POST['streetnumber'] ?? '';
+    $_SESSION['city'] = $_POST['city'] ?? '';
+    $_SESSION['zipcode'] = $_POST['zipcode'] ?? '';
+}
+//INITIALIZE WITH SAVED VALUES OR BLANK
+$email = $_SESSION['email'] ?? '';
+$street = $_SESSION['street'] ?? '';
+$streetnumber = $_SESSION['streetnumber'] ?? '';
+$city = $_SESSION['city'] ?? '';
+$zipcode = $_SESSION['zipcode'] ?? '';
 
-// if()
+require 'form-view.php';
