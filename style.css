@@ -1,0 +1,63 @@
+@font-face {
+    font-family: 'Viking';
+    src: url('./assets/PR\ Viking.ttf');
+}
+
+h1, h2, h3, legend {
+    font-family: 'Viking';
+}
+
+h1 {
+    font-size: 8vw;
+    text-align: center;
+    margin: 0px;
+}
+
+h2 {
+    font-size: 5vw;
+}
+
+h3 {
+    font-size: 4vw;
+}
+
+legend {
+    font-size: 3.5vw;
+}
+
+.alert {
+    width: fit-content;
+}
+
+.orderConfirmation {
+    border: double black 4px;
+    border-bottom-left-radius: 25px;
+    border-top-right-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px auto;
+    padding: 10px;
+    width: 50%;
+    background-image: url('./assets/parchment-texture.webp');
+    background-size: cover;
+    filter: sepia(10%);
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto;
+    border: double black 5px;
+    width: 80%;
+    border-bottom-left-radius: 80px;
+    border-top-right-radius: 80px;
+    box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.31);
+    background-image: url('./assets/parchment-texture.webp');
+    background-size: cover;
+    filter: sepia(10%);
+}
+
+
+

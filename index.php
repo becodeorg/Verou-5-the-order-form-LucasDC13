@@ -2,18 +2,6 @@
 declare(strict_types=1);
 session_start();
 
-// Use this function when you need to need an overview of these variables
-function whatIsHappening() {
-    echo '<h2>$_GET</h2>';
-    var_dump($_GET);
-    echo '<h2>$_POST</h2>';
-    var_dump($_POST);
-    echo '<h2>$_COOKIE</h2>';
-    var_dump($_COOKIE);
-    echo '<h2>$_SESSION</h2>';
-    var_dump($_SESSION);
-}
-
 // CATEGORIZE ITEMS
 $tokens = [
     ['category' => 'Harry Potter','name' => '10 Galleons', 'price' => 4.99],
@@ -59,17 +47,21 @@ $accessories = [
     ['category' => 'Accessories', 'name' => 'Velvet pouch - king', 'price' => 24.99],
 ];
 // DEFINE CATEGORIES
-if($_GET['cat'] == 0){
+if(!isset($_GET['cat']) || $_GET['cat'] == 0) {
     $products = array_merge($tokens, $accessories);
 } else if($_GET['cat'] == 1) {
     $products = $tokens;
 } else if ($_GET['cat'] == 2) {
     $products = $accessories;
 };
-
-//INITIALIZE TOTAL AS ZERO
+//INITIALIZE
+$formSubmitted = false;
+$email = $_SESSION['email'] ?? '';
+$street = $_SESSION['street'] ?? '';
+$streetnumber = $_SESSION['streetnumber'] ?? '';
+$city = $_SESSION['city'] ?? '';
+$zipcode = $_SESSION['zipcode'] ?? '';
 $totalValue = 0;
-
 //VALIDATE USER INPUT
 function validate() {
     $error = false;
@@ -112,7 +104,6 @@ function validate() {
     }
     return $error; 
 }
-
 //HANDLE FORM
 function handleForm() {
     global $products, $totalValue;
@@ -120,11 +111,15 @@ function handleForm() {
     if (!$error) {
         $selectedProducts = [];
         foreach ($_POST['products'] as $index => $value) {
-            if ($value === '1') {
-                $selectedProducts[] = $products[$index];
-                $totalValue += $products[$index]['price'];
+            // Check if the checkbox is checked and quantity is more than 0
+            if ($value === '1' && $_POST['quantities'][$index] > 0) {
+                $selectedProduct = $products[$index];
+                $selectedProduct['quantity'] = $_POST['quantities'][$index];
+                $selectedProducts[] = $selectedProduct;
+                $totalValue += $selectedProduct['price'] * $_POST['quantities'][$index];
             }
         }
+        echo "<div class='orderConfirmation'>";
         echo "<p><strong>Order confirmation</strong> sent to <strong>{$_POST['email']}</strong>.</p>";
         echo "<h3>Delivery address:</h3>";
         echo "<p>{$_POST['street']} {$_POST['streetnumber']}</p>";
@@ -132,17 +127,15 @@ function handleForm() {
         echo "<h3>Selected products:</h3>";
 
         foreach ($selectedProducts as $selectedProduct) {
-            echo "<p>{$selectedProduct['name']}</p>";
+            echo "<p>{$selectedProduct['name']} || amount: {$selectedProduct['quantity']}</p>";
         }
-
         echo "<p>Total cost: &euro; $totalValue</p>";
+        echo "</div>";
         $formSubmitted = true;
     } else {
         // Handle errors if any
     }
 }
-
-$formSubmitted = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$formSubmitted) {
     handleForm();
@@ -156,11 +149,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['city'] = $_POST['city'] ?? '';
     $_SESSION['zipcode'] = $_POST['zipcode'] ?? '';
 }
-//INITIALIZE WITH SAVED VALUES OR BLANK
-$email = $_SESSION['email'] ?? '';
-$street = $_SESSION['street'] ?? '';
-$streetnumber = $_SESSION['streetnumber'] ?? '';
-$city = $_SESSION['city'] ?? '';
-$zipcode = $_SESSION['zipcode'] ?? '';
 
 require 'form-view.php';
