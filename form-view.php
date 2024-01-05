@@ -1,5 +1,4 @@
 <?php // This file is mostly containing things for your view / html ?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -13,6 +12,7 @@
     <title>The Money Shop</title>
 </head>
 <body>
+    <div class="parallax"></div>
     <header>
         <h1>Ye Money Shoppe</h1>
     </header>
@@ -22,10 +22,10 @@
         <nav>
             <ul class="nav">
                 <li class="nav-item">
-                    <a class="nav-link active" href="?cat=0">All</a>
+                    <a class="nav-link" href="?cat=0">All</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="?cat=1">Tokens</a>
+                    <a class="nav-link" href="?cat=1">Tokens</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="?cat=2">Accessories</a>
@@ -69,25 +69,20 @@
             <fieldset>
                 <legend>Products</legend>
                 <?php foreach ($products as $i => $product): ?>
+                    <div class="productWrap">
                     <label>
-                    <input type="checkbox" value="1" name="products[<?= $i ?>]"/>
+                    <input type="checkbox" value="1" name="products[<?= $i ?>]" class='productCheck'>
                     <?= $product['category'] ?> - <?= $product['name'] ?> - &euro; <?= number_format($product['price'], 2) ?>
-                    </label>
-                    <input type="number" value="1" min="1" name="quantities[<?= $i ?>]">
-                    <br>     
+                    </label><br>
+                    <input class="quantField" type="number" value="1" min="1" name="quantities[<?= $i ?>]">
+                    </div>  
                 <?php endforeach; ?>
             </fieldset>
 
             <button type="submit" class="btn btn-primary">Order!</button>
         </form>
 
-        <footer>You already ordered <strong>&euro; <?= $totalValue ?></strong> in food and drinks.</footer>
+        <footer>You already ordered <strong>&euro;<?= $totalValue ?></strong> in items.</footer>
     </div>
-
-<style>
-    footer {
-        text-align: center;
-    }
-</style>
 </body>
 </html>

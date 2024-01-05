@@ -54,6 +54,7 @@ if(!isset($_GET['cat']) || $_GET['cat'] == 0) {
 } else if ($_GET['cat'] == 2) {
     $products = $accessories;
 };
+
 //INITIALIZE
 $formSubmitted = false;
 $email = $_SESSION['email'] ?? '';
@@ -62,48 +63,40 @@ $streetnumber = $_SESSION['streetnumber'] ?? '';
 $city = $_SESSION['city'] ?? '';
 $zipcode = $_SESSION['zipcode'] ?? '';
 $totalValue = 0;
+
 //VALIDATE USER INPUT
 function validate() {
     $error = false;
     // CHECK FOR EMPTY FIELDS
-    $required = ['email', 'street', 'streetnumber', 'zipcode', 'city', 'products'];
+    $required = ['email', 'street', 'streetnumber', 'zipcode', 'city'];
     $emptyFields = [];
     foreach ($required as $field) {
         if (empty($_POST[$field])) {
-            $error = true;
             $emptyFields[] = $field;
-            // echo "<p class='alert alert-danger'>{$field} is required.</p>";
         } 
     }
     if (!empty($emptyFields)) {
         echo "<p class='alert alert-danger'> All fields must be filled in.</p>";
         $error = true;
-    } else {
-        // echo "<p class='alert alert-success'>All fields filled in.</p>";
-    }
+    } 
     // CHECK FOR NUMERICAL ZIPCODE
-    if(!is_numeric($_POST['zipcode'])){
+    if(!filter_var($_POST['zipcode'], FILTER_VALIDATE_INT)){
         echo "<p class='alert alert-warning'>Zipcode can only contain numbers.</p>";
         $error = true;
-    } else {
-        // echo "<p class='alert alert-success'>Zipcode validated.</p>";
-    }
+    } 
     // CHECK FOR VALID EMAIL
     if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         echo "<p class='alert alert-warning'>Invalid e-mail address.</p>";
         $error = true;
-    } else {
-        // echo "<p class='alert alert-success'>E-mail address validated.</p>";
-    }
+    } 
     // CHECK FOR EMPTY SHOPPING CART
     if (empty($_POST['products'])) {
         echo "<p class='alert alert-danger'>Please select products before ordering.</p>";
         $error = true;
-    } else {
-        // echo "<p class='alert alert-success'>Chosen products found.</p>";
-    }
+    } 
     return $error; 
 }
+
 //HANDLE FORM
 function handleForm() {
     global $products, $totalValue;
@@ -121,20 +114,19 @@ function handleForm() {
         }
         echo "<div class='orderConfirmation'>";
         echo "<p><strong>Order confirmation</strong> sent to <strong>{$_POST['email']}</strong>.</p>";
-        echo "<h3>Delivery address:</h3>";
+        echo "<h3>Delivery address</h3>";
         echo "<p>{$_POST['street']} {$_POST['streetnumber']}</p>";
         echo "<p>{$_POST['zipcode']} {$_POST['city']}</p>";
-        echo "<h3>Selected products:</h3>";
+        echo "<h3>Selected products</h3>";
 
         foreach ($selectedProducts as $selectedProduct) {
             echo "<p>{$selectedProduct['name']} || amount: {$selectedProduct['quantity']}</p>";
         }
-        echo "<p>Total cost: &euro; $totalValue</p>";
+        echo "<p>Total cost: &euro;$totalValue</p>";
         echo "</div>";
+        echo "<hr>";
         $formSubmitted = true;
-    } else {
-        // Handle errors if any
-    }
+    } 
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$formSubmitted) {

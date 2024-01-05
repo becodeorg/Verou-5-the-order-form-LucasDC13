@@ -3,6 +3,18 @@
     src: url('./assets/PR\ Viking.ttf');
 }
 
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0px; 
+    padding: 0px;
+    background-image: url(./assets/falling-coins-opacity.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
 h1, h2, h3, legend {
     font-family: 'Viking';
 }
@@ -48,7 +60,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 10px auto;
+    margin: 0px auto 10px auto;
     border: double black 5px;
     width: 80%;
     border-bottom-left-radius: 80px;
@@ -59,5 +71,28 @@ header {
     filter: sepia(10%);
 }
 
+fieldset { 
+    width: 80%;
+}
 
+.productWrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0px;
+}
 
+label {
+    width: fit-content;
+    margin: 5px 0px;
+}
+
+.quantField {
+    margin: 5px 0px;
+    width: 50px;
+}
+
+footer {
+    text-align: center;
+}
